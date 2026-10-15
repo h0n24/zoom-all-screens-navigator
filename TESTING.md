@@ -1,5 +1,11 @@
 # Testing
 
+## Version 0.6.2
+
+Interaction checks: **76 passing assertions**, including a 30-pixel diagonal double-click, first-press motion and a 48-DIP default. Update checks: **25 passing assertions** for strict parsing, numeric comparison, equal/older versions, HTTP failures, invalid responses, asynchronous pending/completed states and timeout handling.
+
+The inactive-window first-click fix follows a code-path review: the old foreground-only mouse context skipped the activation click. Physical validation of that specific transition is pending. Earlier live results below do not establish that this regression is fixed on every setup. A standalone real-network transport test was blocked by the execution tool; update completion and failure handling were tested with simulated transport responses.
+
 ## Version 0.6.1 — pointer movement regression
 
 The interaction suite passes **73 assertions**, including 21 new checks for diagonal movement between clicks, consistent release/delayed-action tolerance, cancellation beyond the threshold, and larger system tolerances at 100–300% synthetic scaling. The pointer-movement fix has been checked with deterministic tests; physical hand-motion testing remains to be confirmed. Live results below apply to 0.6.0.

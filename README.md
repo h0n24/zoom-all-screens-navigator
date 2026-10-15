@@ -20,7 +20,7 @@ When upgrading from an older version, quit that helper through its tray icon fir
 
 Arrow keys keep their normal function while typing in chat. After editing, click the overview to resume paging. Release each arrow key before pressing it again. The first/last page does not wrap.
 
-Double-clicks in the All screens rendering area no longer trigger Zoom's whole-window fullscreen. The helper toggles the selected shared screen only when it can recognize its blue expand/collapse button. Without that button, the second click is swallowed. Small pointer movements between clicks are tolerated (12 pixels at 100% scaling, adjusted for DPI). Single clicks and dragging are forwarded; chat, side panels, the title bar and other applications keep their normal mouse behaviour. Pausing the helper restores Zoom's original behaviour.
+Double-clicks in the All screens rendering area no longer trigger Zoom's whole-window fullscreen. The helper toggles the selected shared screen only when it can recognize its blue expand/collapse button. Without that button, the second click is swallowed. Pointer movements during and between clicks are tolerated (48 pixels at 100% scaling, adjusted for DPI). Single clicks and dragging are forwarded; chat, side panels, the title bar and other applications keep their normal mouse behaviour. Pausing the helper restores Zoom's original behaviour.
 
 ## If nothing happens
 
@@ -32,9 +32,17 @@ Double-clicks in the All screens rendering area no longer trigger Zoom's whole-w
 
 Tested live with Zoom **7.1.9.48550**, AutoHotkey **2.0.30 x64**, and Windows at **100% display scaling**. Other themes, versions and mixed-DPI monitors need further live testing. The helper does not increase the number of screens per page or enable All screens on accounts where Zoom does not offer it.
 
+## Updates
+
+The helper checks for updates shortly after launch and once a day while running. A new version produces a notification and an **Update available** download entry in the tray menu. It does not download or install code automatically.
+
+Right-click the tray icon to **Check for updates** manually or turn **Automatic update checks** off. That preference is remembered. If offline, automatic checks fail quietly; a manual check reports the problem.
+
+To update, open the download entry, download the release's **Source code (zip)**, extract the complete folder, quit the old helper and run the new `ZoomNavigator.ahk`. Zoom can stay open. Versions before 0.6.2 need this one manual upgrade to gain update notifications.
+
 ## Privacy
 
-The helper makes no network requests and saves no screenshots. It processes small icon regions in memory when you press an arrow or double-click. It reads window geometry and keyboard-focus metadata, not chat text. Optional local debug logs contain geometry and detection results and are excluded from Git.
+The helper saves no screenshots. Update checks request a small version file from GitHub over HTTPS; GitHub receives the normal connection information and the application version in the User-Agent header. No meeting content, chat text, screenshots or personal identifiers are sent. You can disable automatic checks in the tray menu. It processes small icon regions in memory when you press an arrow or double-click. It reads window geometry and keyboard-focus metadata, not chat text. Optional local debug logs contain geometry and detection results and are excluded from Git.
 
 ## Project
 

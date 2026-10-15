@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.2
+
+- Increase double-click movement tolerance to 48 DIP, including motion during the first press.
+- Track the first click when it activates an inactive Zoom window, preventing an untracked click from reaching native fullscreen handling.
+- Add background update checks at startup and daily, manual checks, a remembered opt-out and an update download entry in the tray menu.
+- Keep updates notification-only: no automatic installation or Zoom restart.
+
 ## 0.6.1
 
 - Allow small pointer movement between double-clicks and while waiting for the view toggle.

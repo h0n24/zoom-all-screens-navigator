@@ -5,8 +5,10 @@
 #Include lib\ZoomWindow.ahk
 #Include lib\ViewButton.ahk
 #Include lib\MouseNavigation.ahk
+#Include lib\UpdateChecker.ahk
 
-; Zoom All Screens Navigator. No calibration, no network, no Zoom restart.
+; Zoom All Screens Navigator. No calibration or Zoom restart required.
+InstallMouseHook()
 CoordMode "Mouse", "Screen"
 CoordMode "ToolTip", "Screen"
 SendMode "Event"
@@ -22,6 +24,7 @@ A_IconTip := "Zoom Navigator - enabled (F6: pause)"
 A_TrayMenu.Delete()
 A_TrayMenu.Add("Pause / resume (F6)", (*) => ToggleNavigation())
 A_TrayMenu.Add("Help", (*) => Run(A_ScriptDir "\README.md"))
+updateService := UpdateChecker('0.6.2')
 A_TrayMenu.Add()
 A_TrayMenu.Add("Quit Zoom Navigator", (*) => ExitApp())
 

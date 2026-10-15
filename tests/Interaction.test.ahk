@@ -35,7 +35,12 @@ try {
         Assert(!tracker.Down(101 + tolerance, 100, 1, 1100, 500, tolerance, tolerance),
             'separate clicks outside tolerance')
     }
-    Assert(ClickTolerance(1, 20, 16) = 20, 'respect larger system tolerance')
+    Assert(ClickTolerance(1, 60, 56) = 60, 'respect larger system tolerance')
+    Assert(ClickTolerance(1, 4, 4) = 48, 'comfortable default movement allowance')
+    Assert(WithinClickMotion(130, 125, 100, 100, ClickTolerance(1, 4, 4)), 'first press jitter keeps sequence')
+    tracker := ClickSequence()
+    tracker.Down(100, 100, 1, 1000, 500, 48, 48)
+    Assert(tracker.Down(130, 125, 1, 1100, 500, 48, 48) && tracker.trigger, '30 pixel moving double-click')
     Assert(FocusTypeUsesArrows(50004), 'edit retains arrows')
     Assert(FocusTypeUsesArrows(50030), 'document retains arrows')
     Assert(!FocusTypeUsesArrows(50033), 'render pane allows navigation')

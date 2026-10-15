@@ -63,7 +63,7 @@ FocusTypeUsesArrows(kind) {
 
 
 ; Allow small hand motion consistently through recognition and delayed input.
-ClickTolerance(scale, systemX, systemY) => Max(Round(12 * scale), systemX, systemY)
+ClickTolerance(scale, systemX, systemY) => Max(Round(48 * scale), systemX, systemY)
 WithinClickMotion(x, y, startX, startY, tolerance) => Abs(x - startX) <= tolerance
     && Abs(y - startY) <= tolerance
 
