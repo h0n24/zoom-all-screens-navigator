@@ -1,5 +1,10 @@
 # Testing
 
+## Version 0.6.1 — pointer movement regression
+
+The interaction suite passes **73 assertions**, including 21 new checks for diagonal movement between clicks, consistent release/delayed-action tolerance, cancellation beyond the threshold, and larger system tolerances at 100–300% synthetic scaling. The pointer-movement fix has been checked with deterministic tests; physical hand-motion testing remains to be confirmed. Live results below apply to 0.6.0.
+
+
 ## Version 0.6.0 — 2026-10-15
 
 Environment: Windows, Zoom 7.1.9.48550, AutoHotkey 2.0.30 x64, 100% scaling. The All screens render child measured 1833 × 966 pixels in a window with two pages. Tests used an already-running meeting without restarting Zoom.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+
+- Allow small pointer movement between double-clicks and while waiting for the view toggle.
+- Use a consistent 12-DIP tolerance (or the larger system tolerance), while preserving drag detection and viewport checks.
+
 ## 0.6.0
 
 - Follow the actual All screens viewport when chat or settings panels are open.

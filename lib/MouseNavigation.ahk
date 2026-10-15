@@ -22,9 +22,11 @@ RenderMouseDown() {
         SendEvent '{Blind}{LButton Down}'
         return
     }
+    scale := Max(1, DllCall('GetDpiForWindow', 'ptr', v.hwnd, 'uint') / 96)
+    tolerance := ClickTolerance(scale, SysGet(36), SysGet(37))
     repeat := clickTracker.Down(x, y, v.child, A_TickCount,
-        DllCall('GetDoubleClickTime', 'uint'), SysGet(36), SysGet(37))
-    mousePress := {forward: !repeat, toggle: clickTracker.trigger, v: v, x: x, y: y}
+        DllCall('GetDoubleClickTime', 'uint'), tolerance, tolerance)
+    mousePress := {forward: !repeat, toggle: clickTracker.trigger, v: v, x: x, y: y, tolerance: tolerance}
     if !repeat {
         SendEvent '{Blind}{LButton Down}'
         lastClick := A_TickCount
@@ -44,7 +46,8 @@ RenderMouseUp() {
         return
     }
     MouseGetPos &x, &y
-    if press.toggle && Abs(x - press.x) <= SysGet(36) && Abs(y - press.y) <= SysGet(37)
+    if press.toggle && WithinClickMotion(x, y, press.x, press.y, press.tolerance)
+        && PointInside(press.v, x, y)
         SetTimer () => ToggleVisibleScreen(press), -1
 }
 
@@ -70,7 +73,8 @@ ToggleVisibleScreen(press) {
             Sleep remaining
         MouseGetPos &x, &y
         if !navEnabled || !WinActive('ahk_id ' v.hwnd) || GetKeyState('LButton', 'P')
-            || !SameViewport(v, ZoomViewport(v.hwnd)) || Abs(x - press.x) > 3 || Abs(y - press.y) > 3
+            || !SameViewport(v, ZoomViewport(v.hwnd)) || !PointInside(v, x, y)
+            || !WithinClickMotion(x, y, press.x, press.y, press.tolerance)
             return
         ; Recheck only the icon crop, with the pointer still away from it.
         size := Round(40 * scale)

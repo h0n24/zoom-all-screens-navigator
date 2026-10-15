@@ -20,7 +20,7 @@ When upgrading from an older version, quit that helper through its tray icon fir
 
 Arrow keys keep their normal function while typing in chat. After editing, click the overview to resume paging. Release each arrow key before pressing it again. The first/last page does not wrap.
 
-Double-clicks in the All screens rendering area no longer trigger Zoom's whole-window fullscreen. The helper toggles the selected shared screen only when it can recognize its blue expand/collapse button. Without that button, the second click is swallowed. Single clicks and dragging are forwarded; chat, side panels, the title bar and other applications keep their normal mouse behaviour. Pausing the helper restores Zoom's original behaviour.
+Double-clicks in the All screens rendering area no longer trigger Zoom's whole-window fullscreen. The helper toggles the selected shared screen only when it can recognize its blue expand/collapse button. Without that button, the second click is swallowed. Small pointer movements between clicks are tolerated (12 pixels at 100% scaling, adjusted for DPI). Single clicks and dragging are forwarded; chat, side panels, the title bar and other applications keep their normal mouse behaviour. Pausing the helper restores Zoom's original behaviour.
 
 ## If nothing happens
 

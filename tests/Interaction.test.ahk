@@ -21,6 +21,21 @@ try {
     Assert(!tracker.Down(10, 10, 1, 2000, 500, 4, 4), 'idle resets')
     Assert(!tracker.Down(30, 10, 1, 2100, 500, 4, 4), 'different position')
     Assert(!tracker.Down(30, 10, 2, 2200, 500, 4, 4), 'different viewport')
+    for scale in [1, 1.25, 1.5, 2, 3] {
+        tolerance := ClickTolerance(scale, 4, 4)
+        tracker := ClickSequence()
+        tracker.Down(-100, 100, 1, 1000, 500, tolerance, tolerance)
+        Assert(tracker.Down(-100 + tolerance, 100 - tolerance, 1, 1100, 500, tolerance, tolerance)
+            && tracker.trigger, 'diagonal hand motion at scale ' scale)
+        Assert(WithinClickMotion(-100 + tolerance, 100 - tolerance, -100, 100, tolerance),
+            'release and delayed click accept same tolerance')
+        Assert(!WithinClickMotion(-99 + tolerance, 100, -100, 100, tolerance), 'larger motion cancels')
+        tracker := ClickSequence()
+        tracker.Down(100, 100, 1, 1000, 500, tolerance, tolerance)
+        Assert(!tracker.Down(101 + tolerance, 100, 1, 1100, 500, tolerance, tolerance),
+            'separate clicks outside tolerance')
+    }
+    Assert(ClickTolerance(1, 20, 16) = 20, 'respect larger system tolerance')
     Assert(FocusTypeUsesArrows(50004), 'edit retains arrows')
     Assert(FocusTypeUsesArrows(50030), 'document retains arrows')
     Assert(!FocusTypeUsesArrows(50033), 'render pane allows navigation')

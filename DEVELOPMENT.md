@@ -23,7 +23,7 @@ Recheck the pair before moving the pointer, then verify foreground, viewport, fo
 
 ## Double-click handling
 
-Mouse hooks apply only over the actual rendering child in the active Zoom window. Forward the first down/up immediately. Consume repeated clicks within the Windows double-click interval and spatial tolerance; trigger at most one toggle per rapid sequence. A drag resets the sequence. Mouse-up remains paired even if the pointer leaves the viewport or a modifier changes. An exit handler releases a forwarded down event.
+Mouse hooks apply only over the actual rendering child in the active Zoom window. Forward the first down/up immediately. Consume repeated clicks within the Windows double-click interval and a 12-DIP spatial tolerance (or the larger system tolerance); trigger at most one toggle per rapid sequence. A drag resets the sequence using the original system movement threshold. The second release and delayed action use the same relaxed double-click tolerance and must remain inside the viewport. Mouse-up remains paired even if the pointer leaves the viewport or a modifier changes. An exit handler releases a forwarded down event.
 
 On a recognized double-click, capture a narrow right-edge strip and find a blue square with a white diagonal expand/collapse glyph. Reject blank squares and the adjacent three-dot menu. Require exactly one candidate, then recheck its crop, unchanged viewport, foreground and pointer before a single click. Without a valid candidate, do nothing. The whole-window fullscreen command is never sent.
 
