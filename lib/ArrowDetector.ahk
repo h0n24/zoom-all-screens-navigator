@@ -15,11 +15,11 @@ class ScreenStrip {
             bitmap := DllCall("gdi32\CreateDIBSection", "ptr", dc, "ptr", info,
                 "uint", 0, "ptr*", &bits, "ptr", 0, "uint", 0, "ptr")
             if !screen || !dc || !bitmap || !bits
-                throw Error("Nelze načíst obraz okna.")
+                throw Error("Could not capture the window region.")
             previous := DllCall("gdi32\SelectObject", "ptr", dc, "ptr", bitmap, "ptr")
             if !DllCall("gdi32\BitBlt", "ptr", dc, "int", 0, "int", 0,
                 "int", w, "int", h, "ptr", screen, "int", x, "int", y, "uint", 0x40CC0020)
-                throw Error("Nelze načíst obraz okna.")
+                throw Error("Could not capture the window region.")
             this.data := Buffer(w * h * 4)
             DllCall("ntdll\RtlMoveMemory", "ptr", this.data, "ptr", bits, "uptr", this.data.Size)
         } finally {

@@ -1,29 +1,47 @@
 # Zoom All Screens Navigator
 
-Use Left and Right to page through Zoom's All screens view on Windows, without calibration. Students do not need to install anything.
+Simple keyboard and mouse navigation for teachers using Zoom's **All screens** view on Windows. No calibration. Students do not need to install anything.
 
-## Quick start
+## Get started
 
-1. Install AutoHotkey v2 from https://www.autohotkey.com/.
-2. Keep the complete project folder, including `lib`.
-3. Exit any older copy of this helper through its tray icon. Do not close Zoom.
-4. Run `Zoom_AllScreens_Arrows_v5.ahk`.
-5. Activate Zoom's All screens window and press Left or Right.
+1. Install [AutoHotkey v2](https://www.autohotkey.com/).
+2. Download this repository using **Code → Download ZIP**, then extract the entire folder.
+3. Double-click **`ZoomNavigator.ahk`**. Keep its `lib` folder alongside it.
+4. Open Zoom's **All screens** view and use the controls below.
 
-F6 pauses or resumes the helper. Pause it while typing in chat. Release the arrow key before pressing it again. At the first/last page, the helper does not click the disabled arrow.
+When upgrading from an older version, quit that helper through its tray icon first. You do not need to restart Zoom.
 
-Use the tray menu to pause, open this guide or quit the helper. Quitting the helper does not end the meeting.
+| Control | Action |
+| --- | --- |
+| **← / →** | Previous / next page, including with chat or settings open. |
+| **Double-click a shared screen** | Activate its visible blue expand button; double-click again to return to the overview. |
+| **F6** | Pause or resume the helper while Zoom is active. |
+| **Tray icon → Quit Zoom Navigator** | Stop the helper without closing Zoom. |
 
-## Limitations
+Arrow keys keep their normal function while typing in chat. After editing, click the overview to resume paging. Release each arrow key before pressing it again. The first/last page does not wrap.
 
-This baseline version expects both arrows at the outside edges of the window. Close side panels before using it. It was tested in Zoom 7.1.9.48550 at 100% scaling. Other display configurations need additional live testing.
+Double-clicks in the All screens rendering area no longer trigger Zoom's whole-window fullscreen. The helper toggles the selected shared screen only when it can recognize its blue expand/collapse button. Without that button, the second click is swallowed. Single clicks and dragging are forwarded; chat, side panels, the title bar and other applications keep their normal mouse behaviour. Pausing the helper restores Zoom's original behaviour.
 
-The helper checks arrow shape, colour and direction before clicking. It does not increase the number of shared screens on a page. If it cannot identify the navigation pair, it sends the original key to Zoom without clicking.
+## If nothing happens
+
+- Make sure the helper is running and not paused; check its tray icon.
+- Activate the All screens window. Both paging arrows must be visible and unobscured.
+- Click away from the chat editor or another control that uses arrow keys.
+- For double-click, select a shared-screen tile so its blue expand button is visible.
+- If Zoom changes its interface and an icon is not recognized, use the visible Zoom buttons directly. No calibration is required or provided.
+
+Tested live with Zoom **7.1.9.48550**, AutoHotkey **2.0.30 x64**, and Windows at **100% display scaling**. Other themes, versions and mixed-DPI monitors need further live testing. The helper does not increase the number of screens per page or enable All screens on accounts where Zoom does not offer it.
 
 ## Privacy
 
-No network access or saved screenshots. Two small edge regions are processed in memory only when navigating. Optional debug logs record geometry and detection results, not meeting content. Logs are excluded from Git.
+The helper makes no network requests and saves no screenshots. It processes small icon regions in memory when you press an arrow or double-click. It reads window geometry and keyboard-focus metadata, not chat text. Optional local debug logs contain geometry and detection results and are excluded from Git.
 
-## Development
+## Project
 
-See [DEVELOPMENT.md](DEVELOPMENT.md) and [TESTING.md](TESTING.md). An executable build is planned but has not been created. This is an independent helper, not an official Zoom product.
+- [Testing and compatibility](TESTING.md)
+- [Development guide](DEVELOPMENT.md)
+- [Changes](CHANGELOG.md)
+
+There is one application entry point: `ZoomNavigator.ahk`. Files in `lib` are dependencies; files in `tests` are developer checks. Historical versions are kept in Git tags instead of duplicate launchers. No executable has been built yet.
+
+This is an independent helper, not an official Zoom product.

@@ -1,55 +1,56 @@
 # Development
 
-## Files
+## Structure
 
-- `Zoom_AllScreens_Arrows_v5.ahk`: AutoHotkey v2 entry point, hotkeys, window checks and click handling.
-- `lib/ArrowDetector.ahk`: bounded GDI capture and in-memory triangle recognition.
-- `tests/ArrowDetector.test.ahk`: deterministic tests without Zoom or desktop interaction.
-- `README.md`: Czech quick-start guide for teachers.
-- `TESTING.md`: live test evidence and remaining compatibility checks.
+- `ZoomNavigator.ahk`: application entry point, tray menu, arrow hotkeys and verified clicks.
+- `lib/ArrowDetector.ahk`: bounded GDI capture and connected-component triangle recognition.
+- `lib/ZoomWindow.ahk`: rendering viewport, focus protection and click-sequence classification.
+- `lib/ViewButton.ahk`: blue expand/collapse icon recognition.
+- `lib/MouseNavigation.ahk`: mouse interception and selected-screen toggling.
+- `tests/`: deterministic in-memory tests; no Zoom interaction.
 
-No external libraries or network services are required. The installed AutoHotkey v2 interpreter is the only runtime dependency besides Windows.
+Windows and AutoHotkey v2 are the only runtime dependencies. Documentation, comments and commit messages are in English. Keep one stable entry point and use Git tags for releases.
 
-## Detection and safeguards
+## Arrow navigation
 
-1. Handle unmodified Left/Right only while `Zoom.exe` is foreground and navigation is enabled. F6 pauses it. A single global busy flag and `KeyWait` prevent overlapping clicks and key-repeat paging.
-2. If the pointer is near a navigation gutter, park it temporarily away from the icon. Hover appearance and pointer highlighting can otherwise obscure the shape.
-3. Read two 54-DIP-wide strips in the middle 16% of the client area's height. Use the window DPI. Never search the entire virtual desktop or shared tiles.
-4. `BitBlt` copies each strip into a top-down 32-bit DIB. Release all GDI handles in `finally`; inspect pixels in memory.
-5. Classify connected blue/grey components, then check size, aspect ratio, filled rows, tip direction, symmetry, density and dark surrounding pixels.
-6. Require exactly one left and one right arrow at matching vertical positions and sizes. Grey is valid as a guard but never a click target.
-7. Honour the Windows double-click interval plus a margin. Re-detect before moving onto the target, check the foreground HWND, unchanged window geometry, pointer movement and the root window under the target.
-8. Send one mouse down/up pair, release the button in `finally`, and restore the pointer only if the user has not moved it. Never retry a click automatically.
+Unmodified Left/Right hotkeys apply only while Zoom is foreground and the helper is enabled. The native `ProctorModeRenderWindow` child provides the current render rectangle, excluding chat/settings and the meeting toolbar. Hidden children are ignored; an absent or ambiguous viewport cancels detection. No saved coordinates or sidebar-width guesses are used.
 
-The second visual check deliberately happens **before** hovering over the arrow. In live testing, the pointer highlight covered the icon and caused a post-hover check to reject it.
+Before navigation, inspect `GetGUIThreadInfo` and UI Automation focus. Zoom's custom chat editor can report the top-level window as its UIA focus, so the native caret flag is essential. Editors, documents, lists and other controls that use arrows receive the original key. Unknown focus also preserves native input. The script never reads editor contents.
 
-The interval check prevents this script's clicks from forming a double-click with each other; it cannot guarantee protection against simultaneous manual mouse input. There remains a small unavoidable race between the last observation and input delivery. Visual recognition is not a semantic Zoom API and cannot guarantee zero false positives in every future layout.
+Capture two 54-DIP-wide strips around the vertical centre of the viewport. Classify connected blue/grey components and verify size, direction, filled rows, symmetry, density and a dark surrounding margin. Require exactly one compatible arrow on each side; never click a disabled grey arrow. If no pair exists, forward the original key without a mouse click.
 
-If no pair is found, the original arrow key is passed to Zoom, without a mouse click. Text focus is not inspected; users should pause navigation with F6 for chat. Side panels/layouts that move the right arrow away from the window edge are intentionally unsupported. Capture needs visible, unobscured gutters. Multi-monitor coordinates are signed; mixed-DPI behaviour needs broader live validation.
+Recheck the pair before moving the pointer, then verify foreground, viewport, focus and pointer position before clicking. A pointer near the gutters is temporarily parked to avoid hover/highlight interference. Release mouse buttons in `finally` and restore the pointer only if it has not moved. A busy flag and `KeyWait` prevent overlapping navigation and held-key paging.
 
-## Tests
+## Double-click handling
 
-From PowerShell in the project folder:
+Mouse hooks apply only over the actual rendering child in the active Zoom window. Forward the first down/up immediately. Consume repeated clicks within the Windows double-click interval and spatial tolerance; trigger at most one toggle per rapid sequence. A drag resets the sequence. Mouse-up remains paired even if the pointer leaves the viewport or a modifier changes. An exit handler releases a forwarded down event.
 
-```powershell
-$test = Start-Process 'C:\Program Files\AutoHotkey\v2\AutoHotkey64.exe' `
-    -ArgumentList '/ErrorStdOut', '.\tests\ArrowDetector.test.ahk' `
-    -WindowStyle Hidden -Wait -PassThru `
-    -RedirectStandardOutput test-results.log -RedirectStandardError test-errors.log
-Get-Content test-results.log, test-errors.log
-$test.ExitCode
-```
+On a recognized double-click, capture a narrow right-edge strip and find a blue square with a white diagonal expand/collapse glyph. Reject blank squares and the adjacent three-dot menu. Require exactly one candidate, then recheck its crop, unchanged viewport, foreground and pointer before a single click. Without a valid candidate, do nothing. The whole-window fullscreen command is never sent.
 
-Tests return a nonzero exit code on failure. They cover direction, enabled state, several scales, negative/large virtual-desktop coordinates, blank areas, wrong colours, rectangles, holes, clipped shapes and multiple candidates. These synthetic fixtures supplement live tests; they do not prove compatibility with every renderer or theme.
+Generated clicks respect the Windows double-click interval plus a margin. Both features share a busy flag and click timestamp. Pixel checks are not a semantic Zoom API: future layouts, occlusion and simultaneous physical input still need live testing. There is an unavoidable interval between observation and input delivery.
 
-For optional live diagnostics:
+## Run tests
+
+From PowerShell in the repository:
 
 ```powershell
-& 'C:\Program Files\AutoHotkey\v2\AutoHotkey64.exe' /ErrorStdOut .\Zoom_AllScreens_Arrows_v5.ahk --debug
+foreach ($suite in 'ArrowDetector', 'Interaction') {
+    $run = Start-Process 'C:\Program Files\AutoHotkey\v2\AutoHotkey64.exe' `
+        -ArgumentList '/ErrorStdOut', "tests/$suite.test.ahk" `
+        -WindowStyle Hidden -Wait -PassThru `
+        -RedirectStandardOutput "$suite-results.log" `
+        -RedirectStandardError "$suite-errors.log"
+    Get-Content "$suite-results.log", "$suite-errors.log"
+    if ($run.ExitCode -ne 0) { throw "$suite failed" }
+}
 ```
 
-`navigation-debug.log` contains no captured images. A `click sent` entry only proves input was sent; verify the page indicator in Zoom to confirm navigation. Restart without `--debug` for normal use. Logs and future binaries are excluded by `.gitignore`.
+The suites exercise synthetic icon regions, DPI scales, negative coordinates, focus types, viewport changes and double/triple-click sequences. See [TESTING.md](TESTING.md) for live evidence and remaining gaps.
 
-## Future release
+To enable optional local diagnostics, launch `ZoomNavigator.ahk --debug` using AutoHotkey. `navigation-debug.log` records detection geometry and events, never captured images or chat text. A `click sent` line does not prove the page changed: verify Zoom visually. Restart only the helper without `--debug` for normal use.
 
-Do not build or publish an executable yet. Before a binary release: validate the live matrix in `TESTING.md`, choose a repository licence, decide supported Windows/Zoom versions, and package the entry point with its included detector and a user-facing help resource. A compiled build will need help handling that does not assume a neighbouring Markdown file. Never bundle meeting data, personal screenshots or diagnostic logs. GitHub commit messages are written in English.
+## Release process
+
+Run both suites, validate the changed behaviour in an existing test meeting, review the staged files, then commit and tag. Never close or restart an active meeting for testing. Never commit screenshots, meeting content, credentials or local diagnostics. The `.local` directory and logs are ignored.
+
+No executable is currently built. Before a binary release, choose a licence, validate supported Windows/Zoom versions, and package user-facing help without assuming a neighbouring Markdown file. Build an executable only when explicitly requested.
