@@ -70,13 +70,16 @@ WithinClickMotion(x, y, startX, startY, tolerance) => Abs(x - startX) <= toleran
 class ClickSequence {
     last := false
     trigger := false
+    count := 0
     Down(x, y, child, now, interval, dx, dy) {
         previous := this.last
         repeated := IsObject(previous) && previous.child = child
             && now - previous.time <= interval
             && Abs(x - previous.x) <= dx && Abs(y - previous.y) <= dy
-        ; Keep consuming a rapid sequence, including triple clicks.
-        this.trigger := repeated && !previous.repeated
+        ; Consume every subsequent click, but allow each completed pair to
+        ; toggle. Forwarding a third click could reach Zoom as a native double-click.
+        this.count := repeated ? this.count + 1 : 1
+        this.trigger := repeated && Mod(this.count, 2) = 0
         this.last := {x: x, y: y, child: child, time: now, repeated: repeated}
         return repeated
     }

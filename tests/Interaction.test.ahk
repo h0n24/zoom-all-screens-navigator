@@ -14,10 +14,21 @@ try {
         for glyph in ['blank', 'menu', 'solid', 'cross']
             Assert(DetectViewButtons(Fixture(scale, glyph), scale).Length = 0, 'reject ' glyph)
     }
+    for scale in [1, 1.25, 2, 3] {
+        step := Max(1, Floor(4 * scale))
+        Loop step {
+            offset := A_Index - 1
+            Assert(DetectViewButtons(Fixture(scale, 'expand', offset, step - 1 - offset), scale).Length = 1,
+                'sparse seeds remain valid at shifted origins')
+        }
+    }
     tracker := ClickSequence()
     Assert(!tracker.Down(10, 10, 1, 1000, 500, 4, 4), 'first click passes')
     Assert(tracker.Down(10, 10, 1, 1100, 500, 4, 4) && tracker.trigger, 'second triggers')
     Assert(tracker.Down(10, 10, 1, 1200, 500, 4, 4) && !tracker.trigger, 'triple suppressed')
+    Assert(tracker.Down(11, 12, 1, 1300, 500, 4, 4) && tracker.trigger, 'next rapid pair triggers without forwarding')
+    Assert(tracker.Down(12, 13, 1, 1400, 500, 4, 4) && !tracker.trigger, 'fifth stays suppressed')
+    Assert(tracker.Down(13, 14, 1, 1450, 500, 4, 4) && tracker.trigger, 'third rapid pair triggers')
     Assert(!tracker.Down(10, 10, 1, 2000, 500, 4, 4), 'idle resets')
     Assert(!tracker.Down(30, 10, 1, 2100, 500, 4, 4), 'different position')
     Assert(!tracker.Down(30, 10, 2, 2200, 500, 4, 4), 'different viewport')
@@ -60,13 +71,13 @@ Assert(value, message) {
     if !value
         throw Error(message)
 }
-Fixture(scale, glyph) {
+Fixture(scale, glyph, offsetX := 0, offsetY := 0) {
     w := Round(50 * scale), h := Round(50 * scale)
     s := {x: -1500, y: 3500, w: w, h: h, data: Buffer(w * h * 4, 0)}
     Loop h {
-        y := A_Index - 1, gy := Floor(y / scale) - 10
+        y := A_Index - 1, gy := Floor((y - offsetY) / scale) - 10
         Loop w {
-            x := A_Index - 1, gx := Floor(x / scale) - 10
+            x := A_Index - 1, gx := Floor((x - offsetX) / scale) - 10
             c := 0x222222
             if glyph != 'blank' && gx >= 0 && gx < 24 && gy >= 0 && gy < 24 {
                 c := 0x0E72ED

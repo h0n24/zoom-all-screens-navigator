@@ -69,6 +69,7 @@ ToggleVisibleScreen(press) {
     if busy || !navEnabled
         return
     busy := true
+    started := A_TickCount
     try {
         v := press.v
         if !WinActive('ahk_id ' v.hwnd) || !SameViewport(v, ZoomViewport(v.hwnd))
@@ -80,32 +81,29 @@ ToggleVisibleScreen(press) {
         if buttons.Length != 1
             return
         target := buttons[1]
-        ; A generated click must never combine with the forwarded first click.
-        remaining := DllCall('GetDoubleClickTime', 'uint') + 80 - (A_TickCount - lastClick)
-        if remaining > 0
-            Sleep remaining
+        ; Clicking the distant blue button cannot form a native double-click
+        ; with the content click. Near the button, the forwarded first click
+        ; already performs the action, so do not click it again.
+        if WithinClickMotion(target.x, target.y, press.x, press.y,
+            press.tolerance + Max(SysGet(36), SysGet(37)))
+            return
         MouseGetPos &x, &y
         if !navEnabled || !WinActive('ahk_id ' v.hwnd) || GetKeyState('LButton', 'P')
             || !SameViewport(v, ZoomViewport(v.hwnd)) || !PointInside(v, x, y)
-            || !WithinClickMotion(x, y, press.x, press.y, press.tolerance)
             return
         ; Recheck only the icon crop, with the pointer still away from it.
         size := Round(40 * scale)
         checked := DetectViewButtons(ScreenStrip(target.x - size // 2, target.y - size // 2, size, size), scale)
         if checked.Length != 1 || !TargetWindowAt(target.x, target.y, v.hwnd)
             return
-        MouseMove target.x, target.y, 0
-        try {
-            MouseClick 'Left',,, 1, 0, 'D'
-            Sleep 50
-        } finally {
-            MouseClick 'Left',,, 1, 0, 'U'
-            lastClick := A_TickCount
-            MouseGetPos &mx, &my
-            if Abs(mx - target.x) <= 2 && Abs(my - target.y) <= 2
-                MouseMove x, y, 0
-        }
-        Log('view button clicked')
+        ; Send one explicit down/up to the verified rendering child. This
+        ; does not move the pointer or synthesize a Windows double-click,
+        ; even when two successive toggles use the same icon position.
+        SetControlDelay -1
+        ControlClick 'x' (target.x - v.x) ' y' (target.y - v.y),
+            'ahk_id ' v.child,,, 1, 'NA Pos'
+        lastClick := A_TickCount
+        Log('view button clicked; ' (A_TickCount - started) ' ms')
     } catch as err {
         Log('double click error: ' err.Message)
     } finally {

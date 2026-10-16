@@ -7,15 +7,16 @@ ButtonBlue(c) => (c & 255) >= 190 && ((c >> 8) & 255) >= 75
 ; The adjacent three-dot menu has no diagonal glyph and is rejected.
 DetectViewButtons(strip, scale := 1) {
     w := strip.w, h := strip.h, n := w * h
-    mask := Buffer(n, 0), found := []
-    Loop n
-        NumPut('uchar', ButtonBlue(NumGet(strip.data, (A_Index - 1) * 4, 'uint')), mask, A_Index - 1)
-    Loop n {
-        seed := A_Index - 1
-        if !NumGet(mask, seed, 'uchar')
+    ; A valid button has a solid blue border. Sparse seeds find that border
+    ; without classifying every pixel in the tall viewport strip twice.
+    mask := Buffer(n, 0), found := [], step := Max(1, Floor(4 * scale))
+    columns := Ceil(w / step), rows := Ceil(h / step)
+    Loop columns * rows {
+        seed := ((A_Index - 1) // columns) * step * w + Mod(A_Index - 1, columns) * step
+        if NumGet(mask, seed, 'uchar') || !ButtonBlue(NumGet(strip.data, seed * 4, 'uint'))
             continue
         queue := [seed], head := 1
-        NumPut('uchar', 0, mask, seed)
+        NumPut('uchar', 1, mask, seed)
         lx := w, rx := 0, ty := h, by := 0
         while head <= queue.Length {
             p := queue[head++], x := Mod(p, w), y := p // w
@@ -24,8 +25,8 @@ DetectViewButtons(strip, scale := 1) {
                 q := p + delta
                 if q < 0 || q >= n || (delta = -1 && x = 0) || (delta = 1 && x = w - 1)
                     continue
-                if NumGet(mask, q, 'uchar') {
-                    NumPut('uchar', 0, mask, q)
+                if !NumGet(mask, q, 'uchar') && ButtonBlue(NumGet(strip.data, q * 4, 'uint')) {
+                    NumPut('uchar', 1, mask, q)
                     queue.Push(q)
                 }
             }

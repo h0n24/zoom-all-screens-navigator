@@ -1,5 +1,13 @@
 # Testing
 
+## Version 0.6.3 — 2026-10-16
+
+All suites pass: arrow detection **88**, interaction **108**, update checks **25** assertions. New coverage checks sparse detection with shifted icon origins at multiple DPI scales and successive rapid pairs, including suppression of intervening odd clicks.
+
+In an existing Zoom meeting, direct child-control clicks successfully expanded and collapsed a selected shared screen without moving the pointer or entering whole-window fullscreen. Both final implementation actions logged approximately **31 ms** from handler entry to click dispatch; this measures helper processing, not display refresh latency. Double-clicking a participant-name tile without a visible view button left the overview unchanged. Zoom was not restarted.
+
+A synthetic blank 150 x 1000 strip benchmark (ten scans) took 625 ms with the old detector and 47 ms with sparse seeds. This is a detector-only measurement, not an end-to-end performance guarantee. Physical hand-motion and inactive-window activation still require user validation; injected desktop tests cannot establish those behaviours conclusively.
+
 ## Version 0.6.2
 
 Interaction checks: **76 passing assertions**, including a 30-pixel diagonal double-click, first-press motion and a 48-DIP default. Update checks: **25 passing assertions** for strict parsing, numeric comparison, equal/older versions, HTTP failures, invalid responses, asynchronous pending/completed states and timeout handling.

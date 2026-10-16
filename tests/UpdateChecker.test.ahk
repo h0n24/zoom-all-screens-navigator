@@ -13,7 +13,7 @@ try {
     Assert(ReleaseCheckResult(200, '0.6.1', '0.6.2') = 'current', 'no downgrade')
     Assert(ReleaseCheckResult(404, '0.6.3', '0.6.2') = 'error', 'HTTP failure')
     Assert(ReleaseCheckResult(200, 'invalid', '0.6.2') = 'error', 'malformed body')
-    Assert(Trim(FileRead(A_ScriptDir '\..\VERSION'), ' `t`r`n') = '0.6.2', 'release marker matches application')
+    Assert(Trim(FileRead(A_ScriptDir '\..\VERSION'), ' `t`r`n') = '0.6.3', 'release marker matches application')
     probe := ProbeChecker(FakeRequest(false))
     probe.Poll()
     Assert(probe.result = '', 'pending request returns without completion')

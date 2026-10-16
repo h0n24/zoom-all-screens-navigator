@@ -24,7 +24,7 @@ A_IconTip := "Zoom Navigator - enabled (F6: pause)"
 A_TrayMenu.Delete()
 A_TrayMenu.Add("Pause / resume (F6)", (*) => ToggleNavigation())
 A_TrayMenu.Add("Help", (*) => Run(A_ScriptDir "\README.md"))
-updateService := UpdateChecker('0.6.2')
+updateService := UpdateChecker('0.6.3')
 A_TrayMenu.Add()
 A_TrayMenu.Add("Quit Zoom Navigator", (*) => ExitApp())
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.3
+
+- Remove the double-click waiting period and avoid cancelling recognized gestures when the pointer subsequently moves within the viewport.
+- Speed up expand/collapse icon recognition using sparse seeds with full component validation.
+- Activate the verified button directly without moving the pointer or generating native double-clicks.
+- Recognize successive rapid pairs while continuing to suppress unpaired extra clicks.
+
 ## 0.6.2
 
 - Increase double-click movement tolerance to 48 DIP, including motion during the first press.
