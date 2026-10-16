@@ -1,5 +1,9 @@
 # Testing
 
+## Version 0.6.4 — 2026-10-16
+
+All 221 automated assertions pass. The Windows x64 executable was compiled with Ahk2Exe 1.1.37.02a2 and AutoHotkey 2.0.30, then launched from an unrelated working directory without adjacent scripts or libraries. Startup produced no errors and the process remained running. The installed AutoHotkey runtime was not removed: this is a standalone packaging smoke test, not a clean-machine compatibility test. Navigation behaviour is unchanged from 0.6.3.
+
 ## Version 0.6.3 — 2026-10-16
 
 All suites pass: arrow detection **88**, interaction **108**, update checks **25** assertions. New coverage checks sparse detection with shifted icon origins at multiple DPI scales and successive rapid pairs, including suppression of intervening odd clicks.

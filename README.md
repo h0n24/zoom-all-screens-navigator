@@ -4,10 +4,13 @@ Simple keyboard and mouse navigation for teachers using Zoom's **All screens** v
 
 ## Get started
 
-1. Install [AutoHotkey v2](https://www.autohotkey.com/).
-2. Download this repository using **Code → Download ZIP**, then extract the entire folder.
-3. Double-click **`ZoomNavigator.ahk`**. Keep its `lib` folder alongside it.
-4. Open Zoom's **All screens** view and use the controls below.
+1. Open the [latest release](https://github.com/h0n24/zoom-all-screens-navigator/releases/latest) and download **`ZoomNavigator-VERSION-windows-x64.exe`**.
+2. Double-click the downloaded file. No installation or AutoHotkey setup is needed.
+3. Open Zoom's **All screens** view and use the controls below.
+
+Windows x64 only; AutoHotkey and this helper do not run natively on macOS. The executable is currently unsigned.
+
+For the editable script instead, install [AutoHotkey v2](https://www.autohotkey.com/), download **Source code (zip)**, extract the entire folder, and run `ZoomNavigator.ahk` with its `lib` folder alongside it.
 
 When upgrading from an older version, quit that helper through its tray icon first. You do not need to restart Zoom.
 
@@ -38,7 +41,17 @@ The helper checks for updates shortly after launch and once a day while running.
 
 Right-click the tray icon to **Check for updates** manually or turn **Automatic update checks** off. That preference is remembered. If offline, automatic checks fail quietly; a manual check reports the problem.
 
-To update, open the download entry, download the release's **Source code (zip)**, extract the complete folder, quit the old helper and run the new `ZoomNavigator.ahk`. Zoom can stay open. Versions before 0.6.2 need this one manual upgrade to gain update notifications.
+To update, open the download entry, download the new `.exe`, quit the old helper through its tray icon, and run the new file. Zoom can stay open. Script users can download **Source code (zip)** instead. Versions before 0.6.2 need one manual upgrade to gain update notifications.
+
+## Verify a download
+
+Each binary release includes `SHA256SUMS.txt`. In PowerShell, calculate the downloaded file's SHA-256 (replace the version with the one downloaded):
+
+```powershell
+Get-FileHash .\ZoomNavigator-0.6.4-windows-x64.exe -Algorithm SHA256
+```
+
+Compare the entire hash with the matching filename in `SHA256SUMS.txt`; letter case does not matter. SHA-256 detects changed or incomplete files more reliably than CRC. A matching checksum is not a digital signature or proof of publisher identity.
 
 ## Privacy
 
@@ -50,6 +63,8 @@ The helper saves no screenshots. Update checks request a small version file from
 - [Development guide](DEVELOPMENT.md)
 - [Changes](CHANGELOG.md)
 
-There is one application entry point: `ZoomNavigator.ahk`. Files in `lib` are dependencies; files in `tests` are developer checks. Historical versions are kept in Git tags instead of duplicate launchers. No executable has been built yet.
+There is one source entry point: `ZoomNavigator.ahk`. Files in `lib` are dependencies; files in `tests` are developer checks. Historical versions are kept in Git tags instead of duplicate launchers. Windows executables are built with the official AutoHotkey Ahk2Exe compiler and attached to releases.
+
+The executable embeds AutoHotkey 2.0.30. See [runtime licence notices](AutoHotkey-LICENSE.txt); the corresponding AutoHotkey source archive is included with binary release downloads. This project's tagged source is also available on every release page.
 
 This is an independent helper, not an official Zoom product.

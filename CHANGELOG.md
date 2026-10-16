@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.4
+
+- Publish a standalone Windows x64 executable built with official Ahk2Exe; users no longer need to install AutoHotkey.
+- Include SHA-256 checksums, runtime licence notices and corresponding AutoHotkey source in binary releases.
+- Embed a short Help dialog so the executable works without adjacent documentation files.
+- Document the Windows-only release and verification workflow in project instructions.
+
 ## 0.6.3
 
 - Remove the double-click waiting period and avoid cancelling recognized gestures when the pointer subsequently moves within the viewport.

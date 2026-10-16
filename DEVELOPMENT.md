@@ -63,4 +63,14 @@ To enable optional local diagnostics, launch `ZoomNavigator.ahk --debug` using A
 
 Run all suites, validate the changed behaviour in an existing test meeting, review the staged files, then commit and tag. Never close or restart an active meeting for testing. Never commit screenshots, meeting content, credentials or local diagnostics. The `.local` directory and logs are ignored.
 
-No executable is currently built. Before a binary release, choose a licence, validate supported Windows/Zoom versions, and package user-facing help without assuming a neighbouring Markdown file. Build an executable only when explicitly requested.
+Every release includes a standalone Windows x64 executable built using official Ahk2Exe and the AutoHotkey 2.0.30 x64 runtime. The tray Help dialog is embedded and requires no neighbouring files. macOS is outside the supported platforms.
+
+Use the official [Ahk2Exe releases](https://github.com/AutoHotkey/Ahk2Exe/releases) and verify the downloaded compiler archive against GitHub's SHA-256 asset digest. Obtain the corresponding [AutoHotkey v2.0.30 source](https://github.com/AutoHotkey/AutoHotkey/tree/v2.0.30). Build from the exact release sources:
+
+```powershell
+./scripts/build-release.ps1 -Compiler .local/compiler/Ahk2Exe.exe -RuntimeSourceZip .local/AutoHotkey-v2.0.30-source.zip
+```
+
+The script writes `dist/VERSION/` and refuses to overwrite an existing executable. It includes the runtime source archive and licence notices, and generates `SHA256SUMS.txt` for all payloads. Check that the supplied source archive matches the pinned runtime. Do not use compression/packers. Smoke-test the executable from an unrelated working directory with the script helper stopped; never run both helpers together. Confirm Help works without a README file.
+
+Attach the executable, runtime source, runtime licence and checksums to the GitHub release before publishing the updated `main/VERSION`. Download the uploaded artifacts and verify their hashes. Binaries remain outside Git history. Checksums verify integrity, not publisher identity; releases are currently unsigned.

@@ -23,8 +23,8 @@ debug := A_Args.Length && A_Args[1] = "--debug"
 A_IconTip := "Zoom Navigator - enabled (F6: pause)"
 A_TrayMenu.Delete()
 A_TrayMenu.Add("Pause / resume (F6)", (*) => ToggleNavigation())
-A_TrayMenu.Add("Help", (*) => Run(A_ScriptDir "\README.md"))
-updateService := UpdateChecker('0.6.3')
+A_TrayMenu.Add("Help", (*) => ShowHelp())
+updateService := UpdateChecker('0.6.4')
 A_TrayMenu.Add()
 A_TrayMenu.Add("Quit Zoom Navigator", (*) => ExitApp())
 
@@ -38,6 +38,16 @@ $*LButton::RenderMouseDown()
 #HotIf IsObject(mousePress)
 $*LButton Up::RenderMouseUp()
 #HotIf
+
+ShowHelp() {
+    MsgBox 'Open Zoom All screens, then use Left/Right to change pages.`n'
+        . 'Double-click a shared screen with a visible blue expand button to expand it; double-click again to return.`n`n'
+        . 'F6: pause or resume. Arrow keys keep working normally in chat.`n'
+        . 'Right-click the tray icon for updates or to quit. Zoom stays open.`n`n'
+        . 'Windows only. No AutoHotkey installation is needed for the EXE.`n'
+        . 'Help, source and runtime licence notices:`n'
+        . 'https://github.com/h0n24/zoom-all-screens-navigator', 'Zoom Navigator help'
+}
 
 ReleaseMouse(*) {
     global mousePress
